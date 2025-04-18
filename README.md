@@ -27,18 +27,24 @@
 ### 📦 Setup Instructions
 
 1. **Clone the Repository**
+   SSH
    ```bash
-   git clone git@github.com:yashpatel-07/ds-project-gtzan-music-genre-classification.git // SSH
+   git clone git@github.com:yashpatel-07/ds-project-gtzan-music-genre-classification.git
+   cd ds-project-gtzan-music-genre-classification
+   ```
+   HTTPS
+   ```bash
    git clone https://github.com/yashpatel-07/ds-project-gtzan-music-genre-classification.git
    cd ds-project-gtzan-music-genre-classification
-2. **Create and activate a virtual environment**
+   ```
+3. **Create and activate a virtual environment**
 
    ```bash
    # pip install virtualenv (if you don't have virtualevn installed)
    virtualenv venv
    source venv/bin/activate
    ```
-3. **Install project dependencies or libraries needed to run this project.**
+4. **Install project dependencies or libraries needed to run this project.**
 
    ```bash
    pip install -r requirements.txt
