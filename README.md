@@ -1,6 +1,4 @@
-# 📊 [Project Title Here]
-> Example:  
-> **Early Skin Cancer Detection: Bringing Dermatology to Everyone)**
+# 📊 [GTZAN Dataset - Music Genre Classification]
 
 ## Project Description (Add the Big Idea)
 
@@ -30,8 +28,9 @@
 
 1. **Clone the Repository**
    ```bash
-   git clone <your-repo-url>
-   cd <your-repo-folder>
+   git clone git@github.com:yashpatel-07/ds-project-gtzan-music-genre-classification.git // SSH
+   git clone https://github.com/yashpatel-07/ds-project-gtzan-music-genre-classification.git
+   cd ds-project-gtzan-music-genre-classification
 2. **Create and activate a virtual environment**
 
    ```bash
