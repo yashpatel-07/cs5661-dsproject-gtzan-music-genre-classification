@@ -1,11 +1,8 @@
-# 📊 [GTZAN Dataset - Music Genre Classification]
+# 📊 GTZAN Dataset - Music Genre Classification
 
-## Project Description (Add the Big Idea)
+## Project Description
 
-> Example:  
-> AI-driven smartphone-based image quality  skin cancer detection can democratize early diagnosis, improving global healthcare accessibility and patient outcomes.
-
-.
+> Around 125 days worth of songs is uploaded to Spotify every 24 hours. This amount of data makes human classification almost impossible, and highly subjective, which necessitates an automated solution. Our AI solution is based on the GTZAN dataset which is a dataset containing 100 songs of 10 different genres, but can be extended as required. We will use a NN model, along with clustering algorithms to create our classifier. Our main goal is to automatically classify music for streaming services (although they likely have their own already), and private individuals' music collections, helping organize their music by genre.
 
 ---
 
@@ -27,6 +24,7 @@
 ### 📦 Setup Instructions
 
 1. **Clone the Repository**
+   
    SSH
    ```bash
    git clone git@github.com:yashpatel-07/ds-project-gtzan-music-genre-classification.git
@@ -59,5 +57,7 @@ We want to thank the following individuals who have contributed to this project:
 
 | Name | GitHub Username |
 |---|---|
-| Jesus A. Beltran | [3eltran23](https://github.com/3eltran23) |
-| Collaborator Name 2 (optional) | [Collaborator Username 2](https://github.com/CollaboratorUsername2) (optional) |
+| Yash Patel | [yashpatel-07](https://github.com/yashpatel-07) |
+| Elias Schablowski | [eschablowski](https://github.com/eschablowski) |
+| Gordon Lulu | [kafu24](https://github.com/kafu24) |
+| Utkarsh Patale | [UtkarshPhatale](https://github.com/UtkarshPhatale) |
