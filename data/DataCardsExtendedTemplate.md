@@ -1,14 +1,15 @@
-# Dataset Name (Acronym)
-Write a short summary describing your dataset (limit
-200 words). Include information about the content
-and topic of the data, sources and motivations for the
-dataset, benefits and the problems or use cases it is
-suitable for.
+# GTZAN Dataset
+
+The GTZAN Dataset is a widely used resource for music genre classification tasks. There are 1,000 audio tracks, each lasting 30 seconds. These tracks are spread evenly across 10 genres: blues, classical, country, disco, hip-hop, jazz, metal, pop, reggae, and rock. Each track is a mono-channel WAV file sampled at 22,050 Hz.​
+
+
+
+
 
 #### Dataset Link
 <!-- info: Provide a link to the dataset: -->
 <!-- width: half -->
-Dataset Link
+[Dataset Link](https://www.kaggle.com/datasets/andradaolteanu/gtzan-dataset-music-genre-classification/data)
 
 #### Data Card Author(s)
 <!-- info: Select **one role per** Data Card Author:
@@ -16,9 +17,7 @@ Dataset Link
 (Usage Note: Select the most appropriate choice to describe the author's role
 in creating the Data Card.) -->
 <!-- width: half -->
-- **Name, Team:** (Owner / Contributor / Manager)
-- **Name, Team:** (Owner / Contributor / Manager)
-- **Name, Team:** (Owner / Contributor / Manager)
+- **Andrada:** (Owner)
 
 ## Authorship
 ### Publishers
