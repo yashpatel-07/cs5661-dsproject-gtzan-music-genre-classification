@@ -11,13 +11,15 @@ The GTZAN Dataset is a widely used resource for music genre classification tasks
 <!-- width: half -->
 [Dataset Link](https://www.kaggle.com/datasets/andradaolteanu/gtzan-dataset-music-genre-classification/data)
 
+The original site is no longer up, but can be found via [Internet Archive](https://web.archive.org/web/20200812034358/http://marsyas.info/downloads/datasets.html)
+
 #### Data Card Author(s)
 <!-- info: Select **one role per** Data Card Author:
 
 (Usage Note: Select the most appropriate choice to describe the author's role
 in creating the Data Card.) -->
 <!-- width: half -->
-- **Andrada:** (Owner)
+- **CS5661 Group 2:** (Owner)
 
 ## Authorship
 ### Publishers
@@ -25,63 +27,46 @@ in creating the Data Card.) -->
 <!-- scope: telescope -->
 <!-- info: Provide the names of the institution or organization responsible
 for publishing the dataset: -->
-Organization Name
+Marsyas (Music Analysis, Retrieval and Synthesis for Audio Signals)
 
 #### Industry Type(s)
 <!-- scope: periscope -->
 <!-- info: Select **all applicable** industry types to which the publishing
 organizations belong: -->
-- Corporate - Tech
-- Corporate - Non-Tech (please specify)
 - Academic - Tech
-- Academic - Non-Tech (please specify)
 - Not-for-profit - Tech
-- Not-for-profit - Non-Tech (please specify)
-- Individual (please specify)
-- Others (please specify)
+- Individual - George Tzanetakis
 
 #### Contact Detail(s)
 <!-- scope: microscope -->
 <!-- info: Provide publisher contact details: -->
-- **Publishing POC:** Provide the name for a POC for this dataset's publishers
-- **Affiliation:** Provide the POC's institutional affiliation
-- **Contact:** Provide the POC's contact details
-- **Mailing List:** Provide a mailing list if available
-- **Website:** Provide a website for the dataset if available
+- **Publishing POC:** George Tzanetakis - Main Designer and Developer
+- **Affiliation:** University of Victoria - Department of Computer Science
+- **Contact:** gtzan@cs.uvic.ca
+- **Mailing List:** 
+  - For [Users](https://sourceforge.net/projects/marsyas/lists/marsyas-users)
+  - For [Developers](https://sourceforge.net/projects/marsyas/lists/marsyas-developers)
+- **Website:**
+  - Most recent Marsyas [archive link](https://web.archive.org/web/20220330025414/http://marsyas.info/downloads/datasets.html)
+  - George Tzanetakis [school page](https://webhome.csc.uvic.ca/~gtzan/)
 
-### Dataset Owners
-#### Team(s)
-<!-- scope: telescope -->
-<!-- info: Provide the names of the groups or team(s) that own the dataset: -->
-Name of Group or Team
-
-#### Contact Detail(s)
-<!-- scope: periscope -->
-<!-- info: Provide pathways to contact dataset owners: -->
-- **Dataset Owner(s):** Provide the names of the dataset owners
-- **Affiliation:** Provide the affiliation of the dataset owners
-- **Contact:** Provide the email of the dataset owner
-- **Group Email:** Provide a link to the mailing-list@server.com for the dataset owner team
-- **Website:** Provide a link to the website for the dataset owner team
-
-#### Author(s)
+#### Authors (original 2002 publication in IEEE Transactions on Audio and Speech Processing)
 <!-- scope: microscope -->
 <!-- info: Provide the details of all authors associated with the dataset:
 
 (Usage Note: Provide the affiliation and year if different from publishing
 institutions or multiple affiliations.) -->
-- Name, Title, Affiliation, YYYY
-- Name, Title, Affiliation, YYYY
-- Name, Title, Affiliation, YYYY
-- Name, Title, Affiliation, YYYY
+- George Tzanetakis, Student Member, IEEE, 2002
+- Perry Cook, Member, IEEE, 2002
 
 ### Funding Sources
 #### Institution(s)
 <!-- scope: telescope -->
 <!-- info: Provide the names of the funding institution(s): -->
-- Name of Institution
-- Name of Institution
-- Name of Institution
+- NSF
+- State of New Jersey Commission on Science and Technology
+- Intel
+- Ariel Foundation <!-- spelled as Arial in the paper, but probably a typo -->
 
 #### Funding or Grant Summary(ies)
 <!-- scope: periscope -->
@@ -91,26 +76,17 @@ the creation, collection, or curation of the dataset.
 
 Use additional notes to capture any other relevant information or
 considerations. -->
-*For example, Institution 1 and institution 2 jointly funded this dataset as a
-part of the XYZ data program, funded by XYZ grant awarded by institution 3 for
-the years YYYY-YYYY.*
-
-Summarize here. Link to documents if available.
-
-**Additional Notes:** Add here
+- NSF under [Grant 9984087](https://www.nsf.gov/awardsearch/showAward?AWD_ID=9984087&HistoricalAwards=false)
+- State of New Jersey Commission on Science and Technology under Grant 01-2042-007-22
+- Intel
+- Ariel Foundation
 
 ## Dataset Overview
 #### Data Subject(s)
 <!-- scope: telescope -->
 <!-- info: Select ***all applicable**** subjects contained the dataset: -->
-- Sensitive Data about people
-- Non-Sensitive Data about people
-- Data about natural phenomena
-- Data about places and objects
 - Synthetically generated data
-- Data about systems or products and their behaviors
-- Unknown
-- Others (Please specify)
+- Others - Music recorded from a variety of sources
 
 #### Dataset Snapshot
 <!-- scope: periscope -->
@@ -119,26 +95,24 @@ to include relevant information, considerations, and links to table(s) with
 more detailed breakdowns.) -->
 Category | Data
 --- | ---
-Size of Dataset | 123456 MB
-Number of Instances | 123456
-Number of Fields | 123456
-Labeled Classes | 123456
-Number of Labels | 123456789
-Average Labeles Per Instance | 123456
-Algorithmic Labels | 123456789
-Human Labels | 123456789
-Other Characteristics | 123456
+Size of Dataset | 1.2 GB
+Number of Instances | 1000
+Length of Instance | 30 seconds
+Labeled Classes | 10
+Number of Labels | 1000
+Average Labels Per Instance | 1
+Average Instances Per Label | 100
+Frequency | 22050 MHz
+Channel | Mono
+Bit Depth | 16
+Format | .wav
 
-**Above:** Provide a caption for the above table of visualization.
-
-**Additional Notes:** Add here.
+**Above:** Dataset snapshot based off the audio data
 
 #### Content Description
 <!-- scope: microscope -->
 <!-- info: Provide a short description of the content in a data point: -->
-Summarize here. Include links if available.
-
-**Additional Notes:** Add here.
+The dataset consists of 1000 audio tracks each 30 seconds long. It contains 10 genres, each represented by 100 tracks. The tracks are all 22050Hz Mono 16-bit audio files in .wav format.
 
 #### Descriptive Statistics
 <!-- width: full -->
@@ -170,19 +144,8 @@ mode |
 #### Sensitivity Type(s)
 <!-- scope: telescope -->
 <!-- info: Select ***all applicable*** data types present in the dataset: -->
-- User Content
-- User Metadata
-- User Activity Data
-- Identifiable Data
-- S/PII
-- Business Data
-- Employee Data
-- Pseudonymous Data
-- Anonymous Data
-- Health Data
-- Children’s Data
 - None
-- Others (Please specify)
+- Others - Author did not keep track of all sources
 
 #### Field(s) with Sensitive Data
 <!-- scope: periscope -->
@@ -539,166 +502,6 @@ out for, or other relevant information or considerations. -->
   publisher={Springer}
 }
 ```
-
-**Additional Notes:** Add here
-
-## Access, Rentention, & Wipeout
-### Access
-#### Access Type
-<!-- scope: telescope -->
-<!-- info: Select **one**: -->
-- Internal - Unrestricted
-- Internal - Restricted
-- External - Open Access
-- Others (please specify)
-
-#### Documentation Link(s)
-<!-- scope: periscope -->
-<!-- info: Provide links that describe documentation to access this
-dataset: -->
-- Dataset Website URL
-- GitHub URL
-
-#### Prerequisite(s)
-<!-- scope: microscope -->
-<!-- info: Please describe any required training or prerequisites to access
-this dataset. -->
-For example:
-
-This dataset requires membership in [specific] database groups:
-
-- Complete the [Mandatory Training]
-- Read [Data Usage Policy]
-- Initiate a Data Requesting by filing
-
-#### Policy Link(s)
-<!-- scope: periscope -->
-<!-- info: Provide a link to the access policy: -->
-- Direct download URL
-- Other repository URL
-
-Code to download data:
-```
-...
-```
-
-#### Access Control List(s)
-<!-- scope: microscope -->
-<!-- info: List and summarize any access control lists associated with this
-dataset. Include links where necessary.
-
-Use additional notes to capture any other information relevant to accessing
-the dataset. -->
-**Access Control List:** Write summary and notes here.
-
-**Access Control List:** Write summary and notes here.
-
-**Access Control List:** Write summary and notes here.
-
-**Additional Notes:** Add here
-
-### Retention
-#### Duration
-<!-- scope: periscope -->
-<!-- info: Specify the duration for which this dataset can be retained: -->
-Specify duration in days, months, or years.
-
-#### Policy Summary
-<!-- scope: microscope -->
-<!-- info: Summarize the retention policy for this dataset. -->
-**Retention Plan ID:** Write here
-
-**Summary:** Write summary and notes here
-
-#### Process Guide
-<!-- scope: periscope -->
-<!-- info: Summarize any requirements and related steps to retain the dataset.
-
-Use additional notes to capture any other relevant information or
-considerations. -->
-For example:
-
-This dataset compiles with [standard policy guidelines].
-
-**Additional Notes:** Add here
-
-#### Exception(s) and Exemption(s)
-<!-- scope: microscope -->
-<!-- info: Summarize any exceptions and related steps to retain the dataset.
-Include links where necessary.
-
-Use additional notes to capture any other relevant information or
-considerations. -->
-**Exemption Code:** `ANONYMOUS_DATA` /
-`EMPLOYEE_DATA` / `PUBLIC_DATA` /
-`INTERNAL_BUSINESS_DATA` /
-`SIMULATED_TEST_DATA`
-
-**Summary:** Write summary and notes here.
-
-**Additional Notes:** Add here
-
-### Wipeout and Deletion
-#### Duration
-<!-- scope: periscope -->
-<!-- info: Specify the duration after which this dataset should be deleted or
-wiped out: -->
-Specify duration in days, months, or years.
-
-#### Deletion Event Summary
-<!-- scope: microscope -->
-<!-- info: Summarize the sequence of events and allowable processing for data
-deletion.
-
-Use additional notes to capture any other relevant information or
-considerations. -->
-**Sequence of deletion and processing events:**
-
-- Summarize first event here
-- Summarize second event here
-- Summarize third event here
-
-**Additional Notes:** Add here
-
-#### Acceptable Means of Deletion
-<!-- scope: periscope -->
-<!-- info: List the acceptable means of deletion: -->
-- Write acceptable means of deletion
-- Write acceptable means of deletion
-- Write acceptable means of deletion
-
-#### Post-Deletion Obligations
-<!-- scope: microscope -->
-<!-- info: Summarize the sequence of obligations after a deletion event.
-
-**Use additional notes to capture any other relevant information or
-considerations.** -->
-**Sequence of post-deletion obligations:**
-
-- Summarize first obligation here
-- Summarize second obligation here
-- Summarize third obligation here
-
-**Additional Notes:** Add here
-
-#### Operational Requirement(s)
-<!-- scope: periscope -->
-<!-- info: List any wipeout integration operational requirements: -->
-**Wipeout Integration Operational Requirements:**
-
-- Write first requirement here
-- Write second requirement here
-- Write third requirement here
-
-#### Exceptions and Exemptions
-<!-- scope: microscope -->
-<!-- info: Summarize any exceptions and related steps to a deletion event.
-
-**Use additional notes to capture any other relevant information or
-considerations.** -->
-**Policy Exception bug:** [bug]
-
-**Summary:** Write summary and notes here
 
 **Additional Notes:** Add here
 
