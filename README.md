@@ -63,3 +63,4 @@ We want to thank the following individuals who have contributed to this project:
 | Utkarsh Patale | [UtkarshPhatale](https://github.com/UtkarshPhatale) |
 | Vedanta Nayak | [DVedaa](https://github.com/DVedaa) |
 | Isha Patil | [ishapatil202](https://github.com/ishapatil202) |
+| Vedant Kankate | [vedant2402](https://github.com/Vedant2402) |
