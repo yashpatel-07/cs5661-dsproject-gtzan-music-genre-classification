@@ -6,6 +6,7 @@ scikit-learn
 scipy
 tensorflow
 matplotlib
+pyarrow
 
 tqdm
 

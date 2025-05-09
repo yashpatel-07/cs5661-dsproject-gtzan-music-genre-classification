@@ -12,7 +12,7 @@ import pandas as pd
 import argparse
 
 parser = argparse.ArgumentParser(description="Preprocess audio files.")
-parser.add_argument("--data_dir", type=str, default="data",
+parser.add_argument("--data_dir", type=str, default=pathlib.Path.cwd() / "data",
                     help="Directory containing audio files.")
 parser.add_argument("--target_sr", type=int, default=22050,
                     help="Target sample rate.")
@@ -22,7 +22,7 @@ parser.add_argument("--sample_multiplier", type=int, default=1,
                     help="Number of samples to split the inputs into.")
 parser.add_argument("--mmap", action="store_true",
                     help="Use memory mapping for large files.")
-parser.add_argument("--output_dir", type=str, default="output",
+parser.add_argument("--output_dir", type=str, default=pathlib.Path.cwd() / "output",
                     help="Directory to save the processed files.")
 
 args = parser.parse_args()
@@ -67,7 +67,6 @@ for file in tqdm.tqdm(data_dir.rglob("*.wav")):
 
 
 audio_df["genre"] = audio_df["genre"].astype("category")
-audio_df["file_path"] = audio_df["file_path"].astype("string")
 audio_df["audio"] = audio_df["audio"].astype("object")
 audio_df["audio"] = audio_df["audio"].apply(lambda x: x.astype("float32"))
 
