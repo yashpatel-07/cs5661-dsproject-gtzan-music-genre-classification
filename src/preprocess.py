@@ -1,15 +1,12 @@
 #!/usr/bin/env python
 # # -*- coding: utf-8 -*-
 
-from data_loader import GTZAN_Dataset
 import keras
 import keras_tuner
 import math
 
-SAMPLE_RATE = 16000 #22050
 
-
-def SingleSTFT_PreprocessingLayer(trial: keras_tuner.HyperParameters = None, **kwargs):
+def SingleSTFT_PreprocessingLayer(trial: keras_tuner.HyperParameters = None, SAMPLE_RATE: int = 22500, **kwargs):
     """
     A custom Keras layer for preprocessing audio data.
     """
@@ -25,7 +22,7 @@ def SingleSTFT_PreprocessingLayer(trial: keras_tuner.HyperParameters = None, **k
     ])
 
 
-def MultiSTFT_PreprocessingLayer(hp = keras_tuner.HyperParameters, **kwargs):
+def MultiSTFT_PreprocessingLayer(hp = keras_tuner.HyperParameters, SAMPLE_RATE: int = 22500, **kwargs):
     """
     A custom Keras layer for preprocessing audio data.
     """
@@ -54,7 +51,7 @@ def MultiSTFT_PreprocessingLayer(hp = keras_tuner.HyperParameters, **kwargs):
     ])
 
 
-def MelSpectrogram_PreprocessingLayer(hp: keras_tuner.HyperParameters = None, input_shape=(None, ), **kwargs):
+def MelSpectrogram_PreprocessingLayer(hp: keras_tuner.HyperParameters = None, SAMPLE_RATE: int = 22500, **kwargs):
     """
     A custom Keras layer for preprocessing audio data.
     """

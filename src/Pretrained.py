@@ -6,7 +6,7 @@ import keras_tuner
 from preprocess import MultiSTFT_PreprocessingLayer, SingleSTFT_PreprocessingLayer, MelSpectrogram_PreprocessingLayer
 # import optuna
 
-def PretrainedModel(hp: keras_tuner.HyperParameters):
+def PretrainedModel(hp: keras_tuner.HyperParameters, SAMPLE_RATE: int):
     """
     A custom Keras model for audio classification.
     """
@@ -31,11 +31,11 @@ def PretrainedModel(hp: keras_tuner.HyperParameters):
         raise ValueError(f"Unknown image model: {image_model}")
     
     if spectogram_type == "SingleSTFT":
-        preprocessing_layer = SingleSTFT_PreprocessingLayer(hp)
+        preprocessing_layer = SingleSTFT_PreprocessingLayer(hp, SAMPLE_RATE)
     elif spectogram_type == "MultiSTFT":
-        preprocessing_layer = MultiSTFT_PreprocessingLayer(hp)
+        preprocessing_layer = MultiSTFT_PreprocessingLayer(hp, SAMPLE_RATE)
     elif spectogram_type == "MelSpectrogram":
-        preprocessing_layer = MelSpectrogram_PreprocessingLayer(hp)
+        preprocessing_layer = MelSpectrogram_PreprocessingLayer(hp, SAMPLE_RATE)
     else:
         raise ValueError(f"Unknown spectrogram type: {spectogram_type}")
     
@@ -103,12 +103,17 @@ if __name__ == "__main__":
         default=Path.cwd() / "output",
         help="Directory containing the audio data.",
     )
+    parser.add_argument(
+        "--sample_rate",
+        type=int,
+        help="The sample rate of the processed audio files."
+    )
     parsed_args = parser.parse_args()
 
 
     dataset = pd.read_feather(parsed_args.data_dir / "audio.feather")
     tuner = keras_tuner.Hyperband(
-        lambda x: PretrainedModel(x),
+        lambda x: PretrainedModel(x, parsed_args["sample_rate"]),
         objective='val_loss',
         max_epochs=20,
         directory=Path.cwd() / "hyper_parameter_tuning",
