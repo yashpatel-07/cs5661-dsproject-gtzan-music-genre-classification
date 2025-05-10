@@ -1,0 +1,15 @@
+# Python Ignores
+.venv
+__pycache__
+*.pyc
+*.pyo
+
+# Data Ignores
+hyper_parameter_tuning
+data
+output
+
+
+
+# Standard Ignores
+*.DS_Store
