@@ -1,0 +1,15 @@
+keras>=3.9.2 # This could likely be downgraded, there's just no information when keras.layers.Pipeline and STFT were added
+keras_tuner
+numpy
+pandas
+scikit-learn
+scipy
+tensorflow
+matplotlib
+pyarrow
+
+tqdm
+
+# Install Accelerators based on platform
+# tensorflow[and-cuda]; sys_platform != 'darwin'
+tensorflow-metal; sys_platform == 'darwin'
