@@ -3,7 +3,7 @@
 
 import keras
 import keras_tuner
-from preprocess import MultiSTFT_PreprocessingLayer, SingleSTFT_PreprocessingLayer, MelSpectrogram_PreprocessingLayer
+from preprocess import HyperPreprocessingLayer
 # import optuna
 
 
@@ -12,9 +12,8 @@ def PretrainedModel(hp: keras_tuner.HyperParameters, SAMPLE_RATE: int):
     A custom Keras model for audio classification.
     """
 
-    spectogram_type = hp.Choice("spectrogram_type", ["MultiSTFT"])
-
-    image_model = hp.Choice("image_model", ["MobileNet", "ResNet50"])
+    image_model = hp.Choice(
+        "image_model", ["MobileNet", "ResNet50", "ResNet50V2", "XCeption"])
 
     if image_model == "MobileNet":
         image_model = keras.applications.MobileNetV2(
@@ -28,18 +27,22 @@ def PretrainedModel(hp: keras_tuner.HyperParameters, SAMPLE_RATE: int):
             input_shape=(None, None, 3),
             pooling="max",
         )
+    elif image_model == "ResNet50V2":
+        image_model = keras.applications.ResNet50V2(
+            include_top=False,
+            input_shape=(None, None, 3),
+            pooling="max",
+        )
+    elif image_model == "XCeption":
+        image_model = keras.applications.Xception(
+            include_top=False,
+            input_shape=(None, None, 3),
+            pooling="max",
+        )
     else:
         raise ValueError(f"Unknown image model: {image_model}")
 
-    if spectogram_type == "SingleSTFT":
-        preprocessing_layer = SingleSTFT_PreprocessingLayer(hp, SAMPLE_RATE)
-    elif spectogram_type == "MultiSTFT":
-        preprocessing_layer = MultiSTFT_PreprocessingLayer(hp, SAMPLE_RATE)
-    elif spectogram_type == "MelSpectrogram":
-        preprocessing_layer = MelSpectrogram_PreprocessingLayer(
-            hp, SAMPLE_RATE)
-    else:
-        raise ValueError(f"Unknown spectrogram type: {spectogram_type}")
+    preprocessing_layer = HyperPreprocessingLayer(hp, SAMPLE_RATE)
 
     hidden_size = hp.Int("hidden_size", 128, 512, step=64)
 
@@ -64,7 +67,7 @@ def PretrainedModel(hp: keras_tuner.HyperParameters, SAMPLE_RATE: int):
         optimizer=keras.optimizers.Adam(learning_rate=hp.Float(
             "learning_rate", 1e-5, 1e-2, sampling="log")),
         loss="sparse_categorical_crossentropy",
-        metrics=["accuracy"],
+        metrics=["accuracy"]
     )
 
     return model
@@ -72,28 +75,7 @@ def PretrainedModel(hp: keras_tuner.HyperParameters, SAMPLE_RATE: int):
 
 if __name__ == "__main__":
     import numpy as np
-    # hyperparams = {'spectrogram_type': 'MultiSTFT', 'image_model': 'MobileNet', 'start_frame_length_ms': 35, 'end_frame_length_ms': 55, 'frame_length_step': 10, 'frame_step': 0.4603676629120844, 'hidden_size': 256, 'learning_rate': 2.0116853501886966e-05}
-    # hyperparams = optuna.trial.FixedTrial(hyperparams)
-    # model = PretrainedModel(hyperparams, (220500, ))
-    # model.fit(GTZAN_Dataset('/Users/eliasschablowski/Desktop/CSULA/5661/p/output'))
     from pathlib import Path
-
-    # optuna.logging.get_logger("optuna").addHandler(logging.StreamHandler(sys.stdout))
-    # study_name = "example-study"  # Unique identifier of the study.
-    # storage_name = "sqlite:///{}.db".format(study_name)
-    # study = optuna.create_study(study_name=study_name, storage=storage_name, load_if_exists=True)
-
-    # def runTrial(trial: optuna.Trial):
-    #     model: keras.Model = PretrainedModel(trial, (220500, ))
-    #     model.fit(GTZAN_Dataset('/Users/eliasschablowski/Desktop/CSULA/5661/p/output'), epochs=trial.suggest_int("epochs", 10, 100, log=True))
-    #     score = model.evaluate(GTZAN_Dataset('/Users/eliasschablowski/Desktop/CSULA/5661/p/output'), verbose=0)
-    #     return score[1]
-
-    # study.optimize(
-    #     runTrial,
-    #     n_trials=100,
-    #     timeout=600,
-    # )
 
     import pandas as pd
     import argparse
@@ -112,13 +94,21 @@ if __name__ == "__main__":
         help="The sample rate of the processed audio files.",
         required=True
     )
+    parser.add_argument(
+        "--log_dir",
+        type=str,
+        default=Path.cwd() / "logs",
+        help="Directory to save the logs.",
+    )
     parsed_args = parser.parse_args()
 
     dataset = pd.read_feather(Path(parsed_args.data_dir) / "audio.feather")
     tuner = keras_tuner.Hyperband(
         lambda x: PretrainedModel(x, parsed_args.sample_rate),
         objective='val_loss',
-        max_epochs=20,
+        max_epochs=50,
+        factor=3,
+        hyperband_iterations=3,
         directory=Path.cwd() / "hyper_parameter_tuning",
         project_name="Pretrained",
     )
@@ -134,22 +124,25 @@ if __name__ == "__main__":
                                                  random_state=42,
                                                  stratify=dataset["genre_id"].to_numpy())
 
-    tuner.search(x_train, y_train,
-                 validation_data=(x_test, y_test),
-                 batch_size=4,
-                 callbacks=[keras.callbacks.TensorBoard("/tmp/tb_logs")],)
-
-    # hp = keras_tuner.HyperParameters()
-    # for x, y in {
-    #     "spectrogram_type": "MultiSTFT",
-    #     "image_model": "MobileNet",
-    #     "start_frame_length_ms": 30,
-    #     "end_frame_length_ms": 50,
-    #     "frame_step": 15,
-    #     "hidden_size": 256,
-    #     "learning_rate": 1e-2
-    # }.items():
-    #     hp.Fixed(x, y)
-
-    # model = PretrainedModel(hp)
-    # model.fit(np.stack(dataset["audio"]), np.array([0 for x in range(len(dataset))]), epochs=10, validation_split=0.2)
+    tuner.search(
+        x_train,
+        y_train,
+        validation_data=(x_test, y_test),
+        batch_size=4,
+        callbacks=[
+            keras.callbacks.TensorBoard(parsed_args.log_dir),
+            keras.callbacks.EarlyStopping(
+                monitor="val_loss",
+                patience=5,
+                restore_best_weights=True,
+                verbose=1,
+            ),
+            keras.callbacks.ReduceLROnPlateau(
+                monitor="val_loss",
+                factor=0.5,
+                patience=3,
+                min_lr=1e-6,
+                verbose=1,
+            ),
+        ],
+    )
