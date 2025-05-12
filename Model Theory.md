@@ -31,7 +31,7 @@ We split the dataset into 80% training, and 20% validation. This is done to ensu
 ## Model
 
 We use standard image classification models, such as ResNet50, ResNet50V2, MobileNetV2, and XCeption.
-We augment the model with an additional hidden dense layer, and a dropout layer to prevent overfitting, and allow more non-linearity.
+We augment the model with 2 additional hidden dense layers, and a dropout layer to prevent overfitting, and allow more non-linearity.
 
 We use a ReduceLROnPlateau callback to reduce the learning rate when the model stops improving.
 Furthermore, we use a EarlyStopping callback to stop training when the model stops improving - this is mostly for those models which significantly overfit to a single category in the beginning, and do not escape this spiral.
@@ -41,9 +41,10 @@ Furthermore, we use a EarlyStopping callback to stop training when the model sto
 flowchart TD
     A[Input] --> Spectrogram[Spectrogram]
     Spectrogram --> Model[Model]
-    Model --> Dense[Dense Layer]
-    Dense --> Dropout[Dropout Layer]
-    Dropout --> Output[Output]
+    Model --> Dropout[Dropout Layer]
+    Dropout --> Dense1[Dense Layer]
+    Dense1 --> Dense2[Dense Layer]
+    Dense2 --> Output[Output]
     Output --> Softmax[Softmax]
 ```
 
