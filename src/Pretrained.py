@@ -114,7 +114,7 @@ if __name__ == "__main__":
     )
     parsed_args = parser.parse_args()
 
-    dataset = pd.read_feather(parsed_args.data_dir / "audio.feather")
+    dataset = pd.read_feather(Path(parsed_args.data_dir) / "audio.feather")
     tuner = keras_tuner.Hyperband(
         lambda x: PretrainedModel(x, parsed_args.sample_rate),
         objective='val_loss',
