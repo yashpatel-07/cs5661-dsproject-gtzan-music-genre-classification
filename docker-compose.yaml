@@ -1,0 +1,55 @@
+services:
+  # preprocess:
+  #   # image: cs5661/tensorflow-image:latest
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile
+  #   command: python3 src/prepare_data.py --output_dir=/preprocessed_data --target_sr 16000 --target_length 5 --sample_multiplier 10 --mmap
+  #   volumes:
+  #     - cs5661-data:/preprocessed_data
+  #   deploy:
+  #     replicas: 1
+    # restart: no
+  train:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: python3 src/Pretrained.py --sample_rate 16000
+    volumes:
+      - cs5661-data:/workspace/output
+      - cs5661-hp_tuning:/workspace/hyper_parameter_tuning
+      - cs5661-logs:/workspace/logs
+    deploy:
+      mode: global
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    restart: on-failure
+    # depends_on:
+      #preprocess:
+       # condition: service_completed_successfully
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      stack:
+        soft: 67108864
+        hard: 67108864
+  tensorboard:
+    image: tensorflow/tensorflow:latest
+    command: tensorboard --logdir=/workspace/logs --bind_all
+    ports:
+      - "6006:6006"
+    volumes:
+      - cs5661-logs:/workspace/logs
+    restart: unless-stopped
+volumes:
+  cs5661-data:
+    driver: local
+  cs5661-hp_tuning:
+    driver: local
+  cs5661-logs:
+    driver: local
