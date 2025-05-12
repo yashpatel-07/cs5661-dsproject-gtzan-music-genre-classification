@@ -7,6 +7,7 @@ import argparse
 from pathlib import Path
 import keras
 import keras_tuner
+from scipy.interpolate import interp1d
 
 from matplotlib.widgets import Button, TextBox
 
@@ -28,9 +29,9 @@ def gen_model(model):
     return keras.Model(inputs=input_layer, outputs=model(keras_tuner.HyperParameters())(input_layer), name=f"{model.__name__}")
 
 models = [gen_model(layer) for layer in [
+    MelSpectrogram_PreprocessingLayer,
     SingleSTFT_PreprocessingLayer,
     MultiSTFT_PreprocessingLayer,
-    MelSpectrogram_PreprocessingLayer
 ]]
 
 dataset = pd.read_feather(Path(parsed_args.data_dir) / "audio.feather")
@@ -50,14 +51,16 @@ def get_audio_data(i):
 fig.subplots_adjust(bottom=0.2)
 mel_img = mel.imshow(models[0](get_audio_data(0)).numpy()[0, :, :], aspect='auto')
 stft_img = stft.imshow(models[1](get_audio_data(0)).numpy()[0, :, :], aspect='auto')
-multi_stft_img = multi_stft.imshow(models[2](get_audio_data(0)).numpy()[0, :, :], aspect='auto')
+multi_stft_img_data = models[2](get_audio_data(0)).numpy()[0, :, :]
+multi_stft_img = multi_stft.imshow(np.interp(multi_stft_img_data, (multi_stft_img_data.min(), multi_stft_img_data.max()), (0, 1)), aspect='auto')
 
 def update_imgs(indx):
     data = get_audio_data(indx)
     plt.suptitle(f"Audio {indx} - {dataset.iloc[indx]['genre']}")
     mel_img.set_array(models[0](data).numpy()[0, :, :])
-    stft_img.set_array(models[1](data).numpy()[0, :, :] * 255)
-    multi_stft_img.set_array(models[2](data).numpy()[0, :, :])
+    stft_img.set_array(models[1](data).numpy()[0, :, :])
+    multi_stft_img_data = models[2](data).numpy()[0, :, :]
+    multi_stft_img.set_array(np.interp(multi_stft_img_data, (multi_stft_img_data.min(), multi_stft_img_data.max()), (0, 1)))
     plt.draw()
 
 class Index:
