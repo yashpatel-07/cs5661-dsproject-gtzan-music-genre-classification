@@ -1,15 +1,15 @@
 services:
-  # preprocess:
-  #   # image: cs5661/tensorflow-image:latest
-  #   build:
-  #     context: .
-  #     dockerfile: Dockerfile
-  #   command: python3 src/prepare_data.py --output_dir=/preprocessed_data --target_sr 16000 --target_length 5 --sample_multiplier 10 --mmap
-  #   volumes:
-  #     - cs5661-data:/preprocessed_data
-  #   deploy:
-  #     replicas: 1
-    # restart: no
+  preprocess:
+    # image: cs5661/tensorflow-image:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: python3 src/prepare_data.py --output_dir=/preprocessed_data --target_sr 16000 --target_length 5 --sample_multiplier 10 --mmap
+    volumes:
+      - cs5661-data:/preprocessed_data
+    deploy:
+      replicas: 1
+    restart: no
   train:
     build:
       context: .
@@ -28,9 +28,9 @@ services:
               count: 1
               capabilities: [gpu]
     restart: on-failure
-    # depends_on:
-      #preprocess:
-       # condition: service_completed_successfully
+    depends_on:
+      preprocess:
+       condition: service_completed_successfully
     ulimits:
       memlock:
         soft: -1
