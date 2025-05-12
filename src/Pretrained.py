@@ -4,7 +4,6 @@
 import keras
 import keras_tuner
 from preprocess import HyperPreprocessingLayer
-# import optuna
 
 
 def PretrainedModel(hp: keras_tuner.HyperParameters, SAMPLE_RATE: int):
@@ -100,6 +99,8 @@ if __name__ == "__main__":
         default=Path.cwd() / "logs",
         help="Directory to save the logs.",
     )
+    parser.add_argument("--iterations", type=int, default=2)
+    parser.add_argument("--batch_size", type=int, default=4)
     parsed_args = parser.parse_args()
 
     dataset = pd.read_feather(Path(parsed_args.data_dir) / "audio.feather")
@@ -108,7 +109,7 @@ if __name__ == "__main__":
         objective='val_loss',
         max_epochs=50,
         factor=3,
-        hyperband_iterations=3,
+        hyperband_iterations=parsed_args.iterations,
         directory=Path.cwd() / "hyper_parameter_tuning",
         project_name="Pretrained",
     )
@@ -128,16 +129,16 @@ if __name__ == "__main__":
         x_train,
         y_train,
         validation_data=(x_test, y_test),
-        batch_size=4,
+        batch_size=parsed_args.batch_size,
         callbacks=[
             keras.callbacks.TensorBoard(parsed_args.log_dir),
-            keras.callbacks.EarlyStopping(
+            keras.callbacks.EarlyStopping( # Stop `return 1` classifiers earlier
                 monitor="val_loss",
                 patience=5,
                 restore_best_weights=True,
                 verbose=1,
             ),
-            keras.callbacks.ReduceLROnPlateau(
+            keras.callbacks.ReduceLROnPlateau( # stop spiraling around optimal point
                 monitor="val_loss",
                 factor=0.5,
                 patience=3,
