@@ -46,6 +46,15 @@ services:
     volumes:
       - cs5661-logs:/workspace/logs
     restart: unless-stopped
+  ngrok:
+    image: ngrok/ngrok:latest
+    command: http http://tensorboard:6006
+    ports:
+      - 4551:4551
+    links:
+      - tensorboard
+    environment:
+      - NGROK_AUTHTOKEN=2x0RtQuIRqRTLgqcKRx16rEnDgp_2HTjUpUXyuK3zhJc31f78
 volumes:
   cs5661-data:
     driver: local
