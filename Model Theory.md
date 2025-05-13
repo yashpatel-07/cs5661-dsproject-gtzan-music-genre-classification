@@ -12,10 +12,12 @@ The GTZAN dataset is a collection of 1,000 audio tracks, each 30 seconds long, s
 1. Split the audio files into smaller segments (e.g., 5 seconds) to create a larger dataset.
 2. Convert the audio files to a suitable format (e.g., mono, 16 kHz) for processing.
 
-This is done to create square-ish spectrograms, which improves model performance.
-Especially for Pretrained models, as they expect square images, and crop/zero-fill any images that are not square.
+This is done to create smaller spectrograms, which improves model performance.
+Especially for Pretrained models, as they expect small images, and rescale any image that is larger, leading to pixel loss.
 
 Furthermore, this allows us to create a larger dataset, which allows for better training and validation of the model.
+
+Lastly, this approach can be used to classify arbitrary songs that are larger than 5sec.
 
 
 ### Data Augmentation
