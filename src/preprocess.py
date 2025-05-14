@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # # -*- coding: utf-8 -*-
 
+from typing import List
 import keras
 import keras_tuner
 import math
@@ -35,47 +36,83 @@ def SingleSTFT_PreprocessingLayer(trial: keras_tuner.HyperParameters = None, SAM
         )
     ], name="STFT_Spectogram")
 
+class MultiSTFT(keras.layers.Layer):
+    """
+    A custom Keras layer for computing multiple STFT of an audio signal.
+    """
+    def __init__(self, frame_lengths: List[int], frame_step: int, SAMPLE_RATE: int, **kwargs):
+        
+        # Remove any STFT-specific arguments from kwargs, since keras.Layer does not accept them
+        stft_args = kwargs.copy()
+        stft_args.pop("frame_length", None)
+        stft_args.pop("frame_step", None)
+        stft_args.pop("fft_length", None)
+        stft_args.pop("mode", None)
+        stft_args.pop("trainable", None)
+        stft_args.pop("expand_dims", None)
+        stft_args.pop("name", None)
+        super(MultiSTFT, self).__init__(**stft_args)
+        self.frame_lengths = frame_lengths
+        self.frame_step = frame_step
+        self.SAMPLE_RATE = SAMPLE_RATE
+        self.stft_layers = [
+            keras.layers.STFTSpectrogram(
+                frame_length=frame_length,
+                frame_step=frame_step,
+                fft_length=2 ** math.ceil(math.log2(max(frame_lengths))),
+                padding="same",
+                **kwargs,
+            ) for frame_length in frame_lengths
+        ]
+
+    def call(self, inputs, training=None):
+        x = keras.ops.expand_dims(inputs, axis=-1)
+        spectrograms = [spectrogram(x, training=training) for spectrogram in self.stft_layers]
+        spectrograms = [keras.ops.expand_dims(spectrogram, axis=-1) for spectrogram in spectrograms]
+        return keras.ops.concatenate(spectrograms, axis=-1)
+
+    def build(self, input_shape):
+        for stft in self.stft_layers:
+            stft.build(input_shape + (1, ))
+        super(MultiSTFT, self).build(input_shape)
+    def get_config(self):
+        config = super(MultiSTFT, self).get_config()
+        config.update({
+            "frame_length_ms": self.frame_lengths,
+            "frame_step_ms": self.frame_step,
+        })
+        return config
+    def compute_output_shape(self, input_shape):
+        output_shapes = [stft.compute_output_shape(input_shape + (1, )) for stft in self.stft_layers]
+        return output_shapes[0] + (3, )
+    def compute_length_from_ms(self, length: int):
+        return int(length * self.SAMPLE_RATE / 1000)
 
 def MultiSTFT_PreprocessingLayer(hp = keras_tuner.HyperParameters, SAMPLE_RATE: int = 22500, **kwargs):
     """
     A custom Keras layer for preprocessing audio data.
     """
-    start_frame_length = hp.Int("start_frame_length_ms", 30, 70, step = 5)
-    end_frame_length = hp.Int("end_frame_length_ms", 70, 100, step = 5)
-    frame_step = hp.Int("frame_step", 5, 25, step=5)
-
-    if start_frame_length is None:
-        start_frame_length = 30
-    if end_frame_length is None:
-        end_frame_length = 70
+    frame_lengths = [hp.Int(f"frame_length_ms_{i}", 30, 250, step = 5) for i in range(3)]
+    frame_step = hp.Int("frame_step", 10, 50, step=5)
+    
+    frame_lengths = [(frame_length if frame_length is not None else 30) for frame_length in frame_lengths]
     if frame_step is None:
         frame_step = 5
-    if start_frame_length < frame_step:
-        start_frame_length = frame_step + 10
-    if end_frame_length < frame_step:
-        end_frame_length = frame_step + 10
-    if start_frame_length > end_frame_length:
-        end_frame_length = start_frame_length + 10
     
-    return lambda input_layer: keras.layers.Concatenate(axis=-1)([
-        keras.layers.Pipeline([
-            keras.layers.Reshape(input_layer.shape[1:] + (1, )),
-            # keras.layers.MaxPooling1D(pool_size=100),
-            # keras.layers.Reshape((input_layer.input.shape[0] // 100, ) + (1, )),
-            keras.layers.STFTSpectrogram(
-                mode="log",
-                frame_length=SAMPLE_RATE * frame_size // 1000,
-                frame_step=SAMPLE_RATE * frame_step // 1000,
-                padding="same",
-                fft_length=2 ** math.ceil(math.log2(SAMPLE_RATE * end_frame_length // 1000)),
-                trainable=False,
-                expand_dims=True,
-                name=f"STFT_{frame_size}",
-            )
-        ],
-        name=f"STFT_Pipeline_{frame_size}")(input_layer)
-        for frame_size in [start_frame_length, (start_frame_length + end_frame_length) // 2, end_frame_length]
-    ])
+    frame_lengths = [SAMPLE_RATE * length // 1000 for length in frame_lengths]
+
+    if frame_step > min(frame_lengths):
+        frame_step = min(frame_lengths) - 1
+    
+    return MultiSTFT(
+        frame_lengths=frame_lengths,
+        frame_step=frame_step,
+        SAMPLE_RATE=SAMPLE_RATE,
+        mode="log",
+        trainable=False,
+        expand_dims=False,
+        **kwargs,
+    )
 
 
 def MelSpectrogram_PreprocessingLayer(hp: keras_tuner.HyperParameters = None, SAMPLE_RATE: int = 22500, **kwargs):
@@ -88,7 +125,7 @@ def MelSpectrogram_PreprocessingLayer(hp: keras_tuner.HyperParameters = None, SA
         mel_bins = 128
     
     return keras.layers.Pipeline([
-        keras.layers.Reshape((None, )),
+        # keras.layers.Reshape((None, )),
         keras.layers.MelSpectrogram(
             sampling_rate=SAMPLE_RATE,
             fft_length=2048,
@@ -108,8 +145,7 @@ class RGBFaker( keras.Layer ) :
             x = inputs
         fake_rgb = keras.ops.concatenate([x for _ in range(3)], axis=-1)
         return fake_rgb
-    def compute_output_shape( self, input_shape ) :
-        print(input_shape)
+    def compute_output_shape(self, input_shape):
         return input_shape[:3] + (3,)
 
 def HyperPreprocessingLayer(hp: keras_tuner.HyperParameters = None, SAMPLE_RATE: int = 22500, **kwargs):
@@ -136,6 +172,9 @@ def HyperPreprocessingLayer(hp: keras_tuner.HyperParameters = None, SAMPLE_RATE:
         raise ValueError(f"Unknown PreprocessingLayer: {style}")
     
     if style != "MultiSTFT":
-        return lambda x: RGBFaker()(layer(x))
+        return keras.layers.Pipeline([
+            layer,
+            RGBFaker(),
+        ], name="PreprocessingLayer")
     else:
         return layer

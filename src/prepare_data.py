@@ -53,7 +53,7 @@ if not data_dir.exists() or not any(data_dir.rglob("*.wav")):
 id = itertools.count()
 audio_df = pd.DataFrame(columns=["genre", "audio"])
 
-for file in tqdm.tqdm(data_dir.rglob("*.wav")):
+for file in tqdm.tqdm(list(data_dir.rglob("*.wav"))):
     sr, audio = wav.read(file, mmap=args.mmap)
 
     # remap to -1 to 1
