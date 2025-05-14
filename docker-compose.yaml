@@ -19,6 +19,7 @@ services:
       - cs5661-data:/workspace/output
       - cs5661-hp_tuning:/workspace/hyper_parameter_tuning
       - cs5661-logs:/workspace/logs
+      - keras-applications:/root/.keras/
     deploy:
       mode: global
       resources:
@@ -38,6 +39,8 @@ services:
       stack:
         soft: 67108864
         hard: 67108864
+    shm_size: 1g
+    privileged: true
   tensorboard:
     image: tensorflow/tensorflow:latest
     command: tensorboard --logdir=/workspace/logs --bind_all
@@ -53,6 +56,9 @@ services:
       - 4551:4551
     links:
       - tensorboard
+    depends_on:
+      - tensorboard
+    restart: unless-stopped
     environment:
       - NGROK_AUTHTOKEN=2x0RtQuIRqRTLgqcKRx16rEnDgp_2HTjUpUXyuK3zhJc31f78
 volumes:
@@ -61,4 +67,6 @@ volumes:
   cs5661-hp_tuning:
     driver: local
   cs5661-logs:
+    driver: local
+  keras-applications:
     driver: local
