@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import itertools
+import math
 import scipy.io.wavfile as wav
 import numpy as np
 import pathlib
@@ -24,17 +25,35 @@ parser.add_argument("--mmap", action="store_true",
                     help="Use memory mapping for large files.")
 parser.add_argument("--output_dir", type=str, default=pathlib.Path.cwd() / "output",
                     help="Directory to save the processed files.")
+parser.add_argument("--download_url", type=str, default="https://web.archive.org/web/20220328223413if_/http://opihi.cs.uvic.ca/sound/genres.tar.gz#expand",
+                    help="URL to download the dataset.")
 
 args = parser.parse_args()
 
 data_dir = pathlib.Path(args.data_dir)
+data_dir.mkdir(parents=True, exist_ok=True)
 output_dir = pathlib.Path(args.output_dir)
 output_dir.mkdir(parents=True, exist_ok=True)
+
+
+# Download the dataset if it doesn't exist
+if not data_dir.exists() or not any(data_dir.rglob("*.wav")):
+    print("Dataset not found. Downloading...")
+    import urllib.request
+    import tarfile
+
+    print(f"Downloading dataset from {args.download_url}...")
+    urllib.request.urlretrieve(args.download_url, data_dir / "genres.tar.gz")
+    print("Extracting dataset...")
+    with tarfile.open(data_dir / "genres.tar.gz", "r:gz") as tar:
+        tar.extractall(path=data_dir)
+    print("Dataset downloaded and extracted.")
+
 
 id = itertools.count()
 audio_df = pd.DataFrame(columns=["genre", "audio"])
 
-for file in tqdm.tqdm(data_dir.rglob("*.wav")):
+for file in tqdm.tqdm(list(data_dir.rglob("*.wav"))):
     sr, audio = wav.read(file, mmap=args.mmap)
 
     # remap to -1 to 1
@@ -54,7 +73,7 @@ for file in tqdm.tqdm(data_dir.rglob("*.wav")):
 
     # Split the audio into smaller segments
     segment_length = target_length
-    stride = len(audio) // (args.sample_multiplier + 1)
+    stride = math.floor(len(audio) / (args.sample_multiplier + 1))
     segments = np.lib.stride_tricks.sliding_window_view(audio, segment_length)[
         ::stride, :]
 
